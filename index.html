@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sort &amp; Reduce Lab — JavaScript Array Practice Builder By M.Adeeb Ali Developer</title>
+<meta name="description" content="20 hands-on JavaScript challenges that train sort() and reduce() on a real products dataset. Run every solution live in the browser.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f2f4fa; --surface:#ffffff; --surface-2:#eaedf7; --ink:#10162b; --muted:#5a6483;
+  --line:#d9dff0; --brand:#4f46e5; --brand-ink:#ffffff; --sort:#4f46e5; --reduce:#d97706;
+  --code-bg:#10162b; --code-ink:#dfe5ff; --ok:#059669; --shadow:0 1px 2px rgba(16,22,43,.06),0 8px 24px rgba(16,22,43,.06);
+  --display:'Space Grotesk','Segoe UI',system-ui,sans-serif;
+  --body:'Inter','Segoe UI',system-ui,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0a0f1f; --surface:#121935; --surface-2:#1a2347; --ink:#eaeeff; --muted:#9aa5cf;
+    --line:#26305c; --brand:#8b84ff; --brand-ink:#0a0f1f; --sort:#8b84ff; --reduce:#fbbf24;
+    --code-bg:#070b18; --code-ink:#dfe5ff; --ok:#34d399; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0a0f1f; --surface:#121935; --surface-2:#1a2347; --ink:#eaeeff; --muted:#9aa5cf;
+  --line:#26305c; --brand:#8b84ff; --brand-ink:#0a0f1f; --sort:#8b84ff; --reduce:#fbbf24;
+  --code-bg:#070b18; --code-ink:#dfe5ff; --ok:#34d399; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+}
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%;scroll-padding-top:calc(env(safe-area-inset-top,0px) + 76px);scroll-behavior:smooth}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.icon{width:1.15em;height:1.15em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none;vertical-align:-.2em}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--brand);outline-offset:2px;border-radius:6px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+
+/* top bar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar .wrap{display:flex;align-items:center;gap:14px;height:60px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;font-size:1.05rem;letter-spacing:-.01em}
+.brand .logo{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--brand);color:var(--brand-ink)}
+.spacer{flex:1}
+.pill-btn{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-weight:500;font-size:.9rem;text-decoration:none;color:var(--ink);transition:border-color .15s,background .15s}
+.pill-btn:hover{border-color:var(--brand)}
+.pill-btn.solid{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+
+/* hero */
+.hero{padding:56px 0 36px}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:40px;align-items:center}
+h1{font-family:var(--display);font-size:clamp(2.2rem,5.2vw,3.7rem);line-height:1.04;letter-spacing:-.03em;margin:0 0 18px}
+.lead{font-size:1.1rem;color:var(--muted);max-width:46ch;margin:0 0 26px}
+.stats{display:flex;flex-wrap:wrap;gap:12px}
+.stat{display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--line);background:var(--surface);border-radius:12px;font-size:.92rem}
+.stat b{font-family:var(--display);font-size:1.15rem}
+.stat .icon{color:var(--brand)}
+
+/* live table */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
+.panel-head{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line);font-weight:600}
+.panel-head small{color:var(--muted);font-weight:400;margin-left:auto;font-family:var(--mono);font-size:.78rem}
+.scroll-x{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+th,td{padding:10px 16px;text-align:left;white-space:nowrap}
+th{font-weight:600;color:var(--muted);font-size:.82rem;background:var(--surface-2)}
+th button{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+th button:focus-visible{outline:3px solid var(--brand);border-radius:4px}
+th[aria-sort="ascending"],th[aria-sort="descending"]{color:var(--brand)}
+td{border-top:1px solid var(--line)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+tbody tr{transition:background .15s}
+tbody tr:hover{background:var(--surface-2)}
+.rating{display:inline-flex;align-items:center;gap:5px}
+.rating .icon{color:#f59e0b;fill:#f59e0b}
+.hint{padding:10px 16px;border-top:1px solid var(--line);color:var(--muted);font-size:.82rem;display:flex;gap:8px;align-items:center}
+
+/* toolbar */
+.section{padding:34px 0}
+.section h2{font-family:var(--display);font-size:1.7rem;letter-spacing:-.02em;margin:0 0 6px}
+.section p.sub{color:var(--muted);margin:0 0 22px}
+.toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:22px}
+.tabs{display:inline-flex;padding:4px;background:var(--surface-2);border-radius:12px;gap:2px}
+.tab{border:0;background:transparent;padding:8px 16px;border-radius:9px;font-weight:500;font-size:.92rem;display:inline-flex;gap:8px;align-items:center;color:var(--muted)}
+.tab[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.search{position:relative;flex:1;min-width:200px;max-width:340px}
+.search .icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.search input{width:100%;padding:10px 14px 10px 38px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font:inherit}
+.progress{margin-left:auto;display:flex;align-items:center;gap:12px;font-size:.9rem;color:var(--muted)}
+.meter{width:130px;height:8px;background:var(--surface-2);border-radius:99px;overflow:hidden}
+.meter i{display:block;height:100%;width:0;background:var(--ok);transition:width .35s}
+
+/* challenge cards */
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow)}
+.card header{display:flex;gap:12px;padding:16px 16px 12px;align-items:flex-start}
+.badge{flex:none;width:38px;height:38px;border-radius:11px;display:grid;place-items:center;color:#fff}
+.badge.sort{background:var(--sort);color:var(--brand-ink)}
+.badge.reduce{background:var(--reduce);color:#1a1200}
+.card h3{margin:0;font-size:1rem;line-height:1.4;font-weight:600}
+.card .meta{font-size:.78rem;color:var(--muted);margin-top:2px;display:flex;gap:8px;align-items:center}
+.card.done{border-color:color-mix(in srgb,var(--ok) 55%,var(--line))}
+.done-mark{margin-left:auto;color:var(--ok);display:none}
+.card.done .done-mark{display:block}
+pre.code{margin:0;padding:14px 16px;background:var(--code-bg);color:var(--code-ink);font:400 .8rem/1.65 var(--mono);overflow-x:auto;white-space:pre}
+pre.code .k{color:#c4b5fd}.code .f{color:#7dd3fc}.code .s{color:#fcd34d}.code .n{color:#fda4af}.code .c{color:#7e8bb8}
+.actions{display:flex;gap:8px;padding:12px 16px;border-top:1px solid #1d2748;background:var(--code-bg)}
+.mini{display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border-radius:9px;border:1px solid #2c3866;background:#161f40;color:#dfe5ff;font-size:.84rem;font-weight:500}
+.mini:hover{border-color:#8b84ff}
+.mini.run{background:#6d64f5;border-color:#6d64f5;color:#fff}
+.out{padding:0 16px;max-height:0;overflow:hidden;transition:max-height .3s,padding .3s;background:var(--surface)}
+.out.open{max-height:520px;padding:14px 16px;overflow:auto}
+.out .label{font-size:.78rem;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.out .big{font-family:var(--display);font-size:1.7rem;font-weight:700;letter-spacing:-.02em}
+.out pre{margin:0;font:400 .8rem/1.6 var(--mono);white-space:pre-wrap;word-break:break-word}
+.out table{font-size:.82rem}.out th,.out td{padding:6px 10px}
+.out .err{color:#e11d48}
+.empty{padding:40px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:16px;display:none}
+
+/* reference */
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.ref{padding:18px}
+.ref h3{margin:0 0 12px;font-family:var(--display);font-size:1.1rem;display:flex;gap:10px;align-items:center}
+.ref .code{border-radius:10px;margin-bottom:10px}
+.ref .code-title{font-size:.8rem;color:var(--muted);margin:10px 0 6px}
+.tips{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.tips li{display:flex;gap:10px;align-items:flex-start}
+.tips .icon{color:var(--ok);margin-top:.25em}
+code.i{font-family:var(--mono);font-size:.86em;background:var(--surface-2);padding:1px 6px;border-radius:6px}
+
+footer{padding:36px 0 56px;border-top:1px solid var(--line);color:var(--muted);font-size:.9rem}
+footer .wrap{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+
+@media (max-width:860px){
+  .hero-grid,.grid,.two{grid-template-columns:minmax(0,1fr)}
+  .progress{margin-left:0;width:100%}
+  .hide-sm{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-code" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-done" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
+    <symbol id="i-sort" viewBox="0 0 24 24"><path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+    <symbol id="i-github" viewBox="0 0 24 24"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+    <symbol id="i-term" viewBox="0 0 24 24"><polyline points="4 17 10 11 4 5"/><line x1="12" x2="20" y1="19" y2="19"/></symbol>
+    <symbol id="i-zap" viewBox="0 0 24 24"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></symbol>
+    <symbol id="i-sigma" viewBox="0 0 24 24"><path d="M18 7V5a1 1 0 0 0-1-1H6.5a.5.5 0 0 0-.4.8l4.5 6a2 2 0 0 1 0 2.4l-4.5 6a.5.5 0 0 0 .4.8H17a1 1 0 0 0 1-1v-2"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></symbol>
+    <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></symbol>
+  </defs>
+</svg>
+
+<div class="bar">
+  <div class="wrap">
+    <div class="brand"><span class="logo"><svg class="icon"><use href="#i-sort"/></svg></span>Sort &amp; Reduce Lab Builder By M.Adeeb Ali Developer</div>
+    <span class="spacer"></span>
+    <button class="pill-btn" id="resetBtn" type="button"><svg class="icon"><use href="#i-reset"/></svg><span class="hide-sm">Reset progress</span></button>
+    <button class="pill-btn" id="themeBtn" type="button" aria-label="Toggle theme"><svg class="icon" id="themeIcon"><use href="#i-moon"/></svg></button>
+  </div>
+</div>
+
+<main>
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <h1>Learn <code style="font-family:var(--mono);font-weight:500">sort()</code> and <code style="font-family:var(--mono);font-weight:500">reduce()</code> by running them.</h1>
+      <p class="lead">Twenty challenges on one products array. Read the solution, run it, and see the exact result right in the page.</p>
+      <div class="stats">
+        <div class="stat"><svg class="icon"><use href="#i-sort"/></svg><span><b>10</b> sort</span></div>
+        <div class="stat"><svg class="icon"><use href="#i-sigma"/></svg><span><b>10</b> reduce</span></div>
+        <div class="stat"><svg class="icon"><use href="#i-layers"/></svg><span><b>6</b> products</span></div>
+      </div>
+    </div>
+
+    <div class="panel" aria-labelledby="liveTitle">
+      <div class="panel-head"><svg class="icon"><use href="#i-layers"/></svg><span id="liveTitle">Products</span><small id="liveCode">original order</small></div>
+      <div class="scroll-x">
+        <table>
+          <thead><tr id="liveHead"></tr></thead>
+          <tbody id="liveBody"></tbody>
+        </table>
+      </div>
+      <div class="hint"><svg class="icon"><use href="#i-zap"/></svg>Click a column header to sort. Click again to reverse.</div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="challenges">
+  <div class="wrap">
+    <h2>Challenges</h2>
+    <p class="sub">Each card runs on a fresh copy of the array, so nothing you run changes the original data.</p>
+    <div class="toolbar">
+      <div class="tabs" role="tablist" aria-label="Filter challenges">
+        <button class="tab" role="tab" aria-selected="true" data-f="all">All</button>
+        <button class="tab" role="tab" aria-selected="false" data-f="sort"><svg class="icon"><use href="#i-sort"/></svg>Sort</button>
+        <button class="tab" role="tab" aria-selected="false" data-f="reduce"><svg class="icon"><use href="#i-sigma"/></svg>Reduce</button>
+      </div>
+      <label class="search"><svg class="icon"><use href="#i-search"/></svg><input id="q" type="search" placeholder="Search challenges" aria-label="Search challenges"></label>
+      <button class="pill-btn" id="runAll" type="button"><svg class="icon"><use href="#i-play"/></svg>Run all</button>
+      <div class="progress"><span id="progText">0 / 20 run</span><div class="meter"><i id="meter"></i></div></div>
+    </div>
+    <div class="grid" id="grid"></div>
+    <div class="empty" id="empty">No challenge matches that search.</div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap two">
+    <div class="panel ref">
+      <h3><svg class="icon"><use href="#i-term"/></svg>Quick syntax reference</h3>
+      <div class="code-title">Sort: low to high</div>
+      <pre class="code" data-hl>products.sort((a, b) =&gt; a.price - b.price);</pre>
+      <div class="code-title">Sort: high to low</div>
+      <pre class="code" data-hl>products.sort((a, b) =&gt; b.price - a.price);</pre>
+      <div class="code-title">Reduce: calculate a total</div>
+      <pre class="code" data-hl>products.reduce((sum, product) =&gt; sum + product.price, 0);</pre>
+      <div class="code-title">Preserve the original array</div>
+      <pre class="code" data-hl>[...products].sort((a, b) =&gt; a.price - b.price);</pre>
+    </div>
+    <div class="panel ref">
+      <h3><svg class="icon"><use href="#i-bulb"/></svg>Practice tips</h3>
+      <ul class="tips">
+        <li><svg class="icon"><use href="#i-check"/></svg><span>Use arrow functions wherever possible.</span></li>
+        <li><svg class="icon"><use href="#i-check"/></svg><span>Understand the accumulator in <code class="i">reduce()</code>: it carries the result from one item to the next.</span></li>
+        <li><svg class="icon"><use href="#i-check"/></svg><span><code class="i">sort()</code> modifies the original array. Copy first with <code class="i">[...products]</code>.</span></li>
+        <li><svg class="icon"><use href="#i-check"/></svg><span>Test every answer with <code class="i">console.log()</code>.</span></li>
+        <li><svg class="icon"><use href="#i-check"/></svg><span>For text, sort with <code class="i">localeCompare()</code> instead of subtracting.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Built with HTML, CSS and vanilla JavaScript. No frameworks, no build step Builder By M.Adeeb Ali Developer.</span>
+    <span class="spacer"></span>
+    <span><svg class="icon"><use href="#i-github"/></svg> Open source practice project</span>
+  </div>
+</footer>
+
+<script>
+'use strict';
+const products = [
+  { id: 1, name: "Laptop",     quantity: 1, price: 90000, rating: 4.5 },
+  { id: 2, name: "Mouse",      quantity: 2, price: 1200,  rating: 4.2 },
+  { id: 3, name: "Keyboard",   quantity: 8, price: 4500,  rating: 4.8 },
+  { id: 4, name: "Monitor",    quantity: 2, price: 35000, rating: 4.3 },
+  { id: 5, name: "Headphones", quantity: 5, price: 3000,  rating: 4.9 },
+  { id: 6, name: "Webcam",     quantity: 6, price: 6500,  rating: 4.1 }
+];
+
+const challenges = [
+  // ---------- Part 1: Sort ----------
+  { type:'sort', title:'Sort products by price (low to high).',
+    code:`return [...products].sort((a, b) => a.price - b.price);` },
+  { type:'sort', title:'Sort products by price (high to low).',
+    code:`return [...products].sort((a, b) => b.price - a.price);` },
+  { type:'sort', title:'Sort products by name (A to Z).',
+    code:`return [...products].sort((a, b) => a.name.localeCompare(b.name));` },
+  { type:'sort', title:'Sort products by rating (highest first).',
+    code:`return [...products].sort((a, b) => b.rating - a.rating);` },
+  { type:'sort', title:'Sort products by quantity (lowest to highest).',
+    code:`return [...products].sort((a, b) => a.quantity - b.quantity);` },
+  { type:'sort', title:'Find the 3 most expensive products using sort() and slice().',
+    code:`return [...products]\n  .sort((a, b) => b.price - a.price)\n  .slice(0, 3);` },
+  { type:'sort', title:'Find the 2 cheapest products using sort() and slice().',
+    code:`return [...products]\n  .sort((a, b) => a.price - b.price)\n  .slice(0, 2);` },
+  { type:'sort', title:'Filter products priced below Rs. 10,000, then sort by price (low to high).',
+    code:`return products\n  .filter(p => p.price < 10000)\n  .sort((a, b) => a.price - b.price);` },
+  { type:'sort', title:'Find the top 3 highest-rated products using sort() and slice().',
+    code:`return [...products]\n  .sort((a, b) => b.rating - a.rating)\n  .slice(0, 3);` },
+  { type:'sort', title:'Sort by rating (highest first). If ratings are equal, sort by price (low to high).',
+    code:`return [...products].sort(\n  (a, b) => b.rating - a.rating || a.price - b.price\n);` },
+
+  // ---------- Part 2: Reduce ----------
+  { type:'reduce', title:'Calculate the total price of all products.',
+    code:`return products.reduce((sum, p) => sum + p.price, 0);` },
+  { type:'reduce', title:'Calculate the total quantity of all products.',
+    code:`return products.reduce((sum, p) => sum + p.quantity, 0);` },
+  { type:'reduce', title:'Calculate the average price of all products.',
+    code:`const total = products.reduce((sum, p) => sum + p.price, 0);\nreturn total / products.length;` },
+  { type:'reduce', title:'Find the most expensive product using reduce().',
+    code:`return products.reduce((max, p) => p.price > max.price ? p : max);` },
+  { type:'reduce', title:'Find the cheapest product using reduce().',
+    code:`return products.reduce((min, p) => p.price < min.price ? p : min);` },
+  { type:'reduce', title:'Find the highest-rated product using reduce().',
+    code:`return products.reduce((best, p) => p.rating > best.rating ? p : best);` },
+  { type:'reduce', title:'Count how many products have a price greater than Rs. 5,000.',
+    code:`return products.reduce((count, p) => p.price > 5000 ? count + 1 : count, 0);` },
+  { type:'reduce', title:'Calculate the total inventory value using price * quantity.',
+    code:`return products.reduce((sum, p) => sum + p.price * p.quantity, 0);` },
+  { type:'reduce', title:'Calculate the total quantity of products with a rating above 4.3.',
+    code:`return products.reduce(\n  (sum, p) => p.rating > 4.3 ? sum + p.quantity : sum,\n  0\n);` },
+  { type:'reduce', title:'Use one reduce() to create an object with total products, total quantity and total inventory value.',
+    code:`return products.reduce((acc, p) => ({\n  totalProducts: acc.totalProducts + 1,\n  totalQuantity: acc.totalQuantity + p.quantity,\n  inventoryValue: acc.inventoryValue + p.price * p.quantity\n}), { totalProducts: 0, totalQuantity: 0, inventoryValue: 0 });` }
+];
+
+/* ---------- helpers ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const icon = (id, cls = '') => `<svg class="icon ${cls}"><use href="#i-${id}"/></svg>`;
+const rs = n => 'Rs. ' + Number(n).toLocaleString('en-PK', { maximumFractionDigits: 2 });
+
+function highlight(src) {
+  let h = esc(src);
+  h = h.replace(/(\/\/.*)/g, '<span class="c">$1</span>');
+  h = h.replace(/\b(return|const|let|new|function)\b/g, '<span class="k">$1</span>');
+  h = h.replace(/\.(sort|slice|filter|reduce|localeCompare)\b/g, '.<span class="f">$1</span>');
+  h = h.replace(/\b(\d[\d.]*)\b/g, '<span class="n">$1</span>');
+  return h;
+}
+
+/* ---------- live hero table ---------- */
+const cols = [
+  { key:'id', label:'ID', num:true },
+  { key:'name', label:'Name' },
+  { key:'quantity', label:'Qty', num:true },
+  { key:'price', label:'Price', num:true },
+  { key:'rating', label:'Rating', num:true }
+];
+let sortState = { key: null, dir: 1 };
+
+function renderLive() {
+  const rows = [...products];
+  if (sortState.key) {
+    const { key, dir } = sortState;
+    rows.sort((a, b) => typeof a[key] === 'string' ? dir * a[key].localeCompare(b[key]) : dir * (a[key] - b[key]));
+  }
+  $('#liveHead').innerHTML = cols.map(c => {
+    const active = sortState.key === c.key;
+    const aria = active ? (sortState.dir === 1 ? 'ascending' : 'descending') : 'none';
+    return `<th class="${c.num ? 'num' : ''}" aria-sort="${aria}"><button type="button" data-k="${c.key}">${c.label}${icon('sort')}</button></th>`;
+  }).join('');
+  $('#liveBody').innerHTML = rows.map(p => `
+    <tr>
+      <td class="num">${p.id}</td><td><b>${esc(p.name)}</b></td><td class="num">${p.quantity}</td>
+      <td class="num">${rs(p.price)}</td>
+      <td class="num"><span class="rating">${icon('star')}${p.rating}</span></td>
+    </tr>`).join('');
+  $('#liveCode').textContent = sortState.key
+    ? `sort by ${sortState.key} (${sortState.dir === 1 ? 'asc' : 'desc'})` : 'original order';
+}
+$('#liveHead').addEventListener('click', e => {
+  const b = e.target.closest('button[data-k]'); if (!b) return;
+  const k = b.dataset.k;
+  sortState = sortState.key === k ? { key:k, dir:-sortState.dir } : { key:k, dir:1 };
+  renderLive();
+  $(`#liveHead button[data-k="${k}"]`)?.focus();
+});
+
+/* ---------- challenge cards ---------- */
+const grid = $('#grid');
+const doneSet = new Set();
+
+function loadProgress() {
+  try { JSON.parse(localStorage.getItem('sr-lab-done') || '[]').forEach(i => doneSet.add(i)); } catch (e) {}
+}
+function saveProgress() {
+  try { localStorage.setItem('sr-lab-done', JSON.stringify([...doneSet])); } catch (e) {}
+}
+
+function renderCards() {
+  grid.innerHTML = challenges.map((c, i) => `
+    <article class="card" id="c${i}" data-i="${i}" data-type="${c.type}">
+      <header>
+        <span class="badge ${c.type}">${icon(c.type === 'sort' ? 'sort' : 'sigma')}</span>
+        <div>
+          <h3>${i + 1}. ${esc(c.title)}</h3>
+          <div class="meta">${c.type === 'sort' ? 'Part 1 · Sort' : 'Part 2 · Reduce'}</div>
+        </div>
+        <span class="done-mark" title="Run">${icon('done')}</span>
+      </header>
+      <pre class="code">${highlight(c.code)}</pre>
+      <div class="actions">
+        <button class="mini run" type="button" data-act="run">${icon('play')}Run</button>
+        <button class="mini" type="button" data-act="copy">${icon('copy')}<span>Copy</span></button>
+      </div>
+      <div class="out" aria-live="polite"></div>
+    </article>`).join('');
+  doneSet.forEach(i => $(`#c${i}`)?.classList.add('done'));
+  updateProgress();
+}
+
+function execute(i) {
+  const data = structuredClone(products);
+  return new Function('products', challenges[i].code)(data);
+}
+
+function renderResult(v) {
+  if (Array.isArray(v) && v.length && typeof v[0] === 'object') {
+    const keys = Object.keys(v[0]);
+    return `<div class="label">${icon('term')}Returned ${v.length} item${v.length > 1 ? 's' : ''}</div>
+      <div class="scroll-x"><table><thead><tr>${keys.map(k => `<th>${k}</th>`).join('')}</tr></thead>
+      <tbody>${v.map(r => `<tr>${keys.map(k => `<td>${esc(r[k])}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+  }
+  if (typeof v === 'number') {
+    return `<div class="label">${icon('term')}Returned a number</div><div class="big">${v.toLocaleString('en-US', { maximumFractionDigits: 2 })}</div>`;
+  }
+  return `<div class="label">${icon('term')}Returned</div><pre>${esc(JSON.stringify(v, null, 2))}</pre>`;
+}
+
+function run(i) {
+  const card = $(`#c${i}`), out = $('.out', card);
+  try {
+    out.innerHTML = renderResult(execute(i));
+    doneSet.add(i); card.classList.add('done'); saveProgress(); updateProgress();
+  } catch (err) {
+    out.innerHTML = `<pre class="err">${esc(err.message)}</pre>`;
+  }
+  out.classList.add('open');
+}
+
+grid.addEventListener('click', async e => {
+  const btn = e.target.closest('button[data-act]'); if (!btn) return;
+  const card = btn.closest('.card'), i = +card.dataset.i;
+  if (btn.dataset.act === 'run') {
+    const out = $('.out', card);
+    if (out.classList.contains('open') && btn.dataset.ran) { out.classList.remove('open'); btn.dataset.ran = ''; btn.lastChild.textContent = 'Run'; return; }
+    run(i); btn.dataset.ran = '1';
+    btn.innerHTML = `${icon('play')}Run again`;
+  } else {
+    try { await navigator.clipboard.writeText(challenges[i].code); btn.lastElementChild.textContent = 'Copied'; }
+    catch (err) { btn.lastElementChild.textContent = 'Press Ctrl+C'; }
+    setTimeout(() => btn.lastElementChild.textContent = 'Copy', 1400);
+  }
+});
+
+function updateProgress() {
+  $('#progText').textContent = `${doneSet.size} / ${challenges.length} run`;
+  $('#meter').style.width = (doneSet.size / challenges.length * 100) + '%';
+}
+
+/* ---------- filters ---------- */
+let filter = 'all';
+function applyFilter() {
+  const q = $('#q').value.trim().toLowerCase();
+  let shown = 0;
+  document.querySelectorAll('.card').forEach(card => {
+    const i = +card.dataset.i;
+    const ok = (filter === 'all' || card.dataset.type === filter) &&
+      (!q || challenges[i].title.toLowerCase().includes(q) || challenges[i].code.toLowerCase().includes(q));
+    card.hidden = !ok; if (ok) shown++;
+  });
+  $('#empty').style.display = shown ? 'none' : 'block';
+}
+document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
+  document.querySelectorAll('.tab').forEach(x => x.setAttribute('aria-selected', x === t));
+  filter = t.dataset.f; applyFilter();
+}));
+$('#q').addEventListener('input', applyFilter);
+$('#runAll').addEventListener('click', () => {
+  challenges.forEach((_, i) => {
+    const card = $(`#c${i}`);
+    if (!card.hidden) { run(i); const b = $('[data-act="run"]', card); b.dataset.ran = '1'; b.innerHTML = `${icon('play')}Run again`; }
+  });
+});
+$('#resetBtn').addEventListener('click', () => {
+  doneSet.clear(); saveProgress();
+  document.querySelectorAll('.card').forEach(c => {
+    c.classList.remove('done'); $('.out', c).classList.remove('open');
+    const b = $('[data-act="run"]', c); b.dataset.ran = ''; b.innerHTML = `${icon('play')}Run`;
+  });
+  updateProgress();
+});
+
+/* ---------- theme ---------- */
+function setTheme(t) {
+  document.documentElement.dataset.theme = t;
+  $('#themeIcon').innerHTML = `<use href="#i-${t === 'dark' ? 'sun' : 'moon'}"/>`;
+}
+$('#themeBtn').addEventListener('click', () => {
+  const cur = document.documentElement.dataset.theme ||
+    (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  setTheme(cur === 'dark' ? 'light' : 'dark');
+});
+if (matchMedia('(prefers-color-scheme: dark)').matches) $('#themeIcon').innerHTML = '<use href="#i-sun"/>';
+
+/* ---------- init ---------- */
+document.querySelectorAll('pre[data-hl]').forEach(p => p.innerHTML = highlight(p.textContent));
+loadProgress();
+renderLive();
+renderCards();
+</script>
+</body>
+</html>
